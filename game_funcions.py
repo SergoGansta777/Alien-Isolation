@@ -4,6 +4,21 @@ import pygame
 
 from bullet import Bullet
 
+def bullet_update(bullets):
+    """Updates the positionf of the bullet and eliminate the old bullets"""
+    bullets.update()
+
+    # Удаление пуль, вышедшие за границы экрана
+    for bullet in bullets.copy():
+        if bullet.rect.bottom <= 0:
+            bullets.remove(bullet)
+
+def fire_bullet(ai_settings, screen, ship, bullets):
+    """Shot bullet if max don't achivied"""
+    if len(bullets) < ai_settings.bullet_allowed:
+        new_bullet = Bullet(ai_settings, screen, ship)
+        bullets.add(new_bullet)
+
 def check_keydown_events(event, ai_settings, screen, ship, bullets):
     """Responds to key process"""
     if event.key == pygame.K_RIGHT:
@@ -17,8 +32,8 @@ def check_keydown_events(event, ai_settings, screen, ship, bullets):
 
     if event.key == pygame.K_SPACE:
         # Создание новой пули и включение ее в группу
-        new_bullet = Bullet(ai_settings, screen, ship)
-        bullets.add(new_bullet)
+        fire_bullet(ai_settings, screen, ship, bullets)
+
 
 def check_keyup_events(event, ship):
     """Respond to key release"""
@@ -40,6 +55,8 @@ def check_events(ai_settings, screen, ship, bullets):
             check_keydown_events(event, ai_settings, screen, ship, bullets)
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
+
+
 
 def update_screen(ai_settings, screen, ship, bullets):
     """Updates the image and displays a new screen"""
