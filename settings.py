@@ -1,5 +1,5 @@
 import pygame
-
+3
 class Settings():
     """The class for storage all settings in the game."""
     def __init__(self):
@@ -14,7 +14,7 @@ class Settings():
 
         # Настройки пришельцев
         self.alien_speed_factor = 0.75
-        self.fleet_drop_speed = 10
+        self.fleet_drop_speed = 6
         # 1 - вправо, -1 - влево
         self.fleet_direction = 1
 
