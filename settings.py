@@ -5,12 +5,18 @@ class Settings():
     def __init__(self):
         """Initialize the settings of the game."""
         self.screen_width = 1920
-        self.screen_height = 1080
+        self.screen_height = 1280
         self.bg_color = (74, 101, 138)
 
 
         self.bg = pygame.image.load('images/fon.jpg')
-        # self.tmp_bg = pygame.transform.scale(self.tmp_bg, (self.screen_width, self.screen_height))
+        self.bg = pygame.transform.scale(self.bg, (self.screen_width, self.screen_height))
+
+        # Настройки пришельцев
+        self.alien_speed_factor = 0.75
+        self.fleet_drop_speed = 10
+        # 1 - вправо, -1 - влево
+        self.fleet_direction = 1
 
         # Настройки корабля
         self.ship_speed_factor = 2.5

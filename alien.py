@@ -22,6 +22,22 @@ class Alien(Sprite):
         # Сохранение позиции c вещественной точностью
         self.x = float(self.rect.x)
 
+    def check_edges(self):
+        """Return True if alien id near screen edge"""
+        screen_rect = self.screen.get_rect()
+        if self.rect.right >= screen_rect.right:
+            return True
+        elif self.rect.left <= 0:
+            return True
+        return False
+
+
+    def update(self):
+        """Moves alien to the right position or left position"""
+        self.x += (self.ai_settings.alien_speed_factor *
+                   self.ai_settings.fleet_direction)
+        self.rect.x = self.x
+
     def blitme(self):
         """Draw a alien in current position"""
         self.screen.blit(self.image, self.rect)

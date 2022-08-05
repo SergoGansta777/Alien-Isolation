@@ -5,6 +5,20 @@ import pygame
 from bullet import Bullet
 from alien import Alien
 
+def check_fleet_edges(ai_settings, aliens):
+    """Reacts when the alien reaches the edge of the screen"""
+    for alien in aliens.sprites():
+        if alien.check_edges():
+            change_fleet_direction(ai_settings, aliens)
+            break
+
+def change_fleet_direction(ai_settings, aliens):
+    """Lowers the entire fleet and changes direction"""
+    for alien in aliens.sprites():
+        alien.rect.y += ai_settings.fleet_drop_speed
+    ai_settings.fleet_direction *= -1
+
+
 def get_number_rows(ai_settings, ship_height, alien_height):
     """Determine amount of rows"""
     available_space_y = (ai_settings.screen_height -
@@ -14,7 +28,7 @@ def get_number_rows(ai_settings, ship_height, alien_height):
 
 def get_number_aliens_x(ai_settings, alien_width):
     """Determine the number of the aliens' ships"""
-    available_space_x = ai_settings.screen_width - 2 * alien_width
+    available_space_x = ai_settings.screen_width - 3 * alien_width
     number_aliens_x = int(available_space_x / (2 * alien_width))
     return number_aliens_x
 
@@ -94,7 +108,11 @@ def check_events(ai_settings, screen, ship, bullets):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
 
-
+def update_aliens(ai_settings, aliens):
+    """Checks if the fleet has reached the edge of the screen
+     and then updates the positions of al aliens"""
+    check_fleet_edges(ai_settings, aliens)
+    aliens.update()
 
 def update_screen(ai_settings, screen, ship, aliens, bullets):
     """Updates the image and displays a new screen"""
