@@ -14,7 +14,7 @@ class Settings():
 
         # Настройки пришельцев
         self.alien_speed_factor = 0.75
-        self.fleet_drop_speed = 6
+        self.fleet_drop_speed = 50
         # 1 - вправо, -1 - влево
         self.fleet_direction = 1
 
@@ -24,7 +24,7 @@ class Settings():
 
 
         # Параметры снарядов
-        self.bullet_speed_factor = 3
+        self.bullet_speed_factor = 4
         self.bullet_width = 45
         self.bullet_height = 55
         self.bullet_color = 68, 69, 210
