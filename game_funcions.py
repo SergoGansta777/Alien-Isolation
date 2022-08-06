@@ -38,7 +38,7 @@ def create_alien(ai_settings, screen, aliens, alien_number, row_number):
     alien_width = alien.rect.width
     alien.x = alien_width + 2 * alien_width * alien_number
     alien.rect.x = alien.x
-    alien.rect.y = alien.rect.height + 1.5 * alien.rect.height * row_number
+    alien.rect.y = alien.rect.height + 1.5 * alien.rect.height * row_number - 500
     aliens.add(alien)
 
 def create_fleet(ai_settings, screen, ship,  aliens):
@@ -54,18 +54,28 @@ def create_fleet(ai_settings, screen, ship,  aliens):
             create_alien(ai_settings, screen, aliens, alien_number, row_number)
 
 
-def update_bullets(aliens, bullets):
+def update_bullets(ai_settings, screen, ship, aliens, bullets):
     """Updates the positionf of the bullet and eliminate the old bullets"""
     bullets.update()
 
-    # Проверка попаданий в пришельцев
-    # При обнаружении попадания удалить пулю и пришельца
-    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
-
+    check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets)
     # Удаление пуль, вышедшие за границы экрана
     for bullet in bullets.copy():
         if bullet.rect.bottom <= 0:
             bullets.remove(bullet)
+
+def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets):
+    """Collision handling"""
+    # Проверка попаданий в пришельцев
+    # При обнаружении попадания удалить пулю и пришельца
+    collisions = pygame.sprite.groupcollide(bullets, aliens, True, True)
+
+    if len(aliens) == 0:
+        # Уничтожение существующих пуль и создание нового флота
+        bullets.empty()
+        ai_settings.allien_speed_factor += 0.25
+        ai_settings.fleet_drop_speed += 1
+        create_fleet(ai_settings, screen, ship, aliens)
 
 def fire_bullet(ai_settings, screen, ship, bullets):
     """Shot bullet if max don't achivied"""
@@ -112,11 +122,15 @@ def check_events(ai_settings, screen, ship, bullets):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
 
-def update_aliens(ai_settings, aliens):
+def update_aliens(ai_settings,ship,  aliens):
     """Checks if the fleet has reached the edge of the screen
      and then updates the positions of al aliens"""
     check_fleet_edges(ai_settings, aliens)
     aliens.update()
+
+    # Проверка коллизий пришелец-корабль
+    if pygame.sprite.spritecollideany(ship, aliens):
+        print("Ship hit!!!")
 
 def update_screen(ai_settings, screen, ship, aliens, bullets):
     """Updates the image and displays a new screen"""
