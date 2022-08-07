@@ -14,12 +14,13 @@ class Settings():
 
         # Настройки пришельцев
         self.alien_speed_factor = 0.75
-        self.fleet_drop_speed = 50
+        self.fleet_drop_speed = 6
         # 1 - вправо, -1 - влево
         self.fleet_direction = 1
 
         # Настройки корабля
         self.ship_speed_factor = 2.5
+        self.ship_limit = 3
         self.ship_size = (120, 144)
 
 

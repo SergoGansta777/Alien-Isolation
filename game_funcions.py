@@ -1,4 +1,5 @@
 import sys
+from time import sleep
 
 import pygame
 
@@ -73,7 +74,7 @@ def check_bullet_alien_collisions(ai_settings, screen, ship, aliens, bullets):
     if len(aliens) == 0:
         # Уничтожение существующих пуль и создание нового флота
         bullets.empty()
-        ai_settings.allien_speed_factor += 0.25
+        ai_settings.alien_speed_factor += 0.25
         ai_settings.fleet_drop_speed += 1
         create_fleet(ai_settings, screen, ship, aliens)
 
@@ -122,7 +123,30 @@ def check_events(ai_settings, screen, ship, bullets):
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
 
-def update_aliens(ai_settings,ship,  aliens):
+def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
+    """Handles ship collisions"""
+    if stats.ships_left > 0:
+        stats.ships_left -= 1
+        # Очистка списков пришельцев и пуль
+        aliens.empty()
+        bullets.empty()
+        # Создание нового флота и размещения корабля в центре
+        create_fleet(ai_settings, screen, ship, aliens)
+        ship.center_ship()
+        # Пауза
+        sleep(0.5)
+    else:
+        stats.game_active = False
+
+def check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets):
+    """Check if aliens get the bottom of the screen"""
+    screen_rect = screen.get_rect()
+    for alien in aliens.sprites():
+        if alien.rect.bottom >= screen_rect.bottom:
+            # Происходит то же, что и при столкновении с кораблем
+            ship_hit(ai_settings, stats, screen, ship, aliens, bullets)
+
+def update_aliens(ai_settings, stats, screen, ship, aliens, bullets):
     """Checks if the fleet has reached the edge of the screen
      and then updates the positions of al aliens"""
     check_fleet_edges(ai_settings, aliens)
@@ -130,7 +154,10 @@ def update_aliens(ai_settings,ship,  aliens):
 
     # Проверка коллизий пришелец-корабль
     if pygame.sprite.spritecollideany(ship, aliens):
-        print("Ship hit!!!")
+        ship_hit(ai_settings, stats, screen, ship, aliens, bullets)
+
+    # Проверка пришельцев, добравшихся до нижнего края экрана
+    check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets)
 
 def update_screen(ai_settings, screen, ship, aliens, bullets):
     """Updates the image and displays a new screen"""
