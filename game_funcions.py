@@ -113,7 +113,7 @@ def check_keyup_events(event, ship):
     if event.key == pygame.K_DOWN:
         ship.moving_down = False
 
-def check_events(ai_settings, screen, ship, bullets):
+def check_events(ai_settings, screen, stats, play_button, ship, bullets):
     """Processing click keys and mouse events."""
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -122,6 +122,14 @@ def check_events(ai_settings, screen, ship, bullets):
             check_keydown_events(event, ai_settings, screen, ship, bullets)
         elif event.type == pygame.KEYUP:
             check_keyup_events(event, ship)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_x, mouse_y = pygame.mouse.get_pos()
+            check_play_button(stats, play_button, mouse_x, mouse_y)
+
+def check_play_button(stats, play_button, mouse_x, mouse_y):
+    """Start new game after click on the button"""
+    if play_button.rect.collidepoint(mouse_x, mouse_y):
+        stats.game_active = True
 
 def ship_hit(ai_settings, stats, screen, ship, aliens, bullets):
     """Handles ship collisions"""
@@ -159,13 +167,15 @@ def update_aliens(ai_settings, stats, screen, ship, aliens, bullets):
     # Проверка пришельцев, добравшихся до нижнего края экрана
     check_aliens_bottom(ai_settings, stats, screen, ship, aliens, bullets)
 
-def update_screen(ai_settings, screen, ship, aliens, bullets):
+def update_screen(ai_settings, screen,stats, ship, aliens, bullets, play_button):
     """Updates the image and displays a new screen"""
 
     # При каждом проходе цикла перерисовывается экран
-    screen.fill(ai_settings.bg_color)
+    # screen.fill(ai_settings.bg_color)
     screen.blit(ai_settings.bg, (0, 0))
 
+    if not stats.game_active:
+        play_button.draw_button()
     # Все пули выводяться позади изображений корабля
     for bullet in bullets.sprites():
         bullet.draw_bullet()
